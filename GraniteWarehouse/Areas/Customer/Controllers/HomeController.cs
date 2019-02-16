@@ -5,40 +5,76 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using GraniteWarehouse.Models;
+using GraniteWarehouse.Data;
+using Microsoft.EntityFrameworkCore;
+using GraniteWarehouse.Extensions;
+using Microsoft.AspNetCore.Http;
 
 namespace GraniteWarehouse.Controllers
 {
     [Area("Customer")]
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        // dependancy injection, a copy of the database, readonly
+        private readonly ApplicationDbContext _db;
+        private string area;
+
+        public HomeController(ApplicationDbContext db)
         {
-            return View();
+            _db = db;
         }
 
-        public IActionResult About()
+        public async Task<IActionResult> Index()
         {
-            ViewData["Message"] = "Your application description page.";
-
-            return View();
+            // bluiding the product list from the _db we got when it was passed in.
+            var productList = await _db.Products
+                .Include(mbox => mbox.ProductTypes)
+                .Include(mbox => mbox.SpecialTags)
+                .ToListAsync();
+            return View(productList);
         }
 
-        public IActionResult Contact()
+       public async Task<IActionResult> Details(int id)
         {
-            ViewData["Message"] = "Your contact page.";
+            // bluiding the product list from the _db we got when it was passed in.
+            var product = await _db.Products
+                .Include(mbox => mbox.ProductTypes)
+                .Include(mbox => mbox.SpecialTags)
+                .Where(mbox => mbox.Id == id) //this is eager loading
+                .FirstOrDefaultAsync();
+            return View(product);
 
-            return View();
         }
 
-        public IActionResult Privacy()
+        [HttpPost, ActionName("Details")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DetailsPost(int id)
         {
-            return View();
+            List<int> listShoppingCart = HttpContext.Session.Get<List<int>>("ssShoppingCart");
+            //make a cart, If the cart is null, then make a new one
+            if (listShoppingCart == null)
+            {
+                listShoppingCart = new List<int>();
+            }
+            listShoppingCart.Add(id);
+            HttpContext.Session.Set("ssShoppingCart", listShoppingCart);
+            return RedirectToAction("Index", "Home", new { area = "Customer"}); // 3rd parameter when crossing areas
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public IActionResult Remove(int id)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            List<int> listShoppingCart = HttpContext.Session.Get<List<int>>("ssShoppingCart");
+            if(listShoppingCart.Count > 0)
+            {
+                if (listShoppingCart.Contains(id))
+                {
+                    listShoppingCart.Remove(id);
+                }
+            }
+
+            HttpContext.Session.Set("ssShoppingCart", listShoppingCart);
+            return RedirectToAction(nameof(Index));
         }
+
     }
 }

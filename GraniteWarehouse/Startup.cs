@@ -41,6 +41,11 @@ namespace GraniteWarehouse
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true; // no access to those cookies
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -61,7 +66,8 @@ namespace GraniteWarehouse
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
-            app.UseAuthentication();
+            app.UseAuthentication(); //this MUST come before useSession(); Order matters
+            app.UseSession();
 
             app.UseMvc(routes =>
             {
