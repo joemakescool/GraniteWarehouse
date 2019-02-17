@@ -7,6 +7,7 @@ using GraniteWarehouse.Data;
 using GraniteWarehouse.Models;
 using GraniteWarehouse.Models.ViewModels;
 using GraniteWarehouse.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GraniteWarehouse.Areas.Admin.Controllers
 {
+    [Authorize(Roles = SD.SuperAdminEndUser)]
+
     [Area("Admin")]
     public class ProductsController : Controller
     {

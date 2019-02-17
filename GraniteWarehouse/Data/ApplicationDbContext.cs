@@ -19,5 +19,6 @@ namespace GraniteWarehouse.Data
         public DbSet<ProductTypes> ProductTypes { get; set; } //give ablity to link to database behind the scences Mapping model to physcial talbe in database
         public DbSet<SpecialTags> SpecialTags { get; set; } // link special tags to database behind the scences
         public DbSet<Products> Products { get; set; } //update?
+        public DbSet<ApplicationUser> ApplicationUser { get; set; }
     }
 }

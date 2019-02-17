@@ -5,9 +5,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using GraniteWarehouse.Data;
 using GraniteWarehouse.Models;
+using Microsoft.AspNetCore.Authorization;
+using GraniteWarehouse.Utility;
 
 namespace GraniteWarehouse.Areas.Admin.Controllers
 {
+    [Authorize(Roles = SD.SuperAdminEndUser)]
+
     [Area("Admin")] // put this at the top ALWAYS
     public class ProductTypesController : Controller
     {

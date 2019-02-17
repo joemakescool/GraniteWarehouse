@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<parameters>
+  <parameter name="IIS Web Application Name" description="" value="GraniteWarehouseJoeBarkerParts1and2" tags="IisApp">
+    <parameterEntry kind="ProviderPath" scope="IisApp" match="^E:\\College\\Spring\ 2019\\CS\ 4790\\GraniteWarehouse\\GraniteWarehouse\\obj\\Release\\netcoreapp2\.1\\PubTmp\\Out\\$" />
+  </parameter>
+</parameters>
